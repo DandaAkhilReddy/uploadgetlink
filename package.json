@@ -1,0 +1,24 @@
+{
+  "name": "uploadgetlink",
+  "version": "1.0.0",
+  "description": "Simple file upload and sharing service - upload files and get shareable links",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@azure/storage-blob": "^12.17.0",
+    "busboy": "^1.6.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^2.4.0"
+  },
+  "keywords": [
+    "file-upload",
+    "file-sharing",
+    "azure-blob-storage",
+    "netlify"
+  ],
+  "author": "",
+  "license": "MIT"
+}

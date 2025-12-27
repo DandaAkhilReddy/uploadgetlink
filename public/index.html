@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UploadGetLink - File Sharing</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📤</text></svg>">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>UploadGetLink</h1>
+      <p class="subtitle">Upload files and get shareable links</p>
+    </header>
+
+    <!-- Password Protection Screen -->
+    <div id="auth-screen" class="screen">
+      <div class="auth-box">
+        <h2>Enter Password</h2>
+        <form id="auth-form">
+          <input
+            type="password"
+            id="password-input"
+            placeholder="Enter access password"
+            autocomplete="current-password"
+            required
+          >
+          <button type="submit" class="btn btn-primary">Unlock</button>
+        </form>
+        <p id="auth-error" class="error-message"></p>
+      </div>
+    </div>
+
+    <!-- Upload Screen -->
+    <div id="upload-screen" class="screen hidden">
+      <!-- Drop Zone -->
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-zone-content">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p class="drop-text">Drag & drop files here</p>
+          <p class="drop-subtext">or</p>
+          <label class="btn btn-secondary">
+            Browse Files
+            <input type="file" id="file-input" hidden>
+          </label>
+        </div>
+      </div>
+
+      <!-- File Info -->
+      <div id="file-info" class="file-info hidden">
+        <span id="file-name"></span>
+        <span id="file-size"></span>
+        <button id="remove-file" class="btn-icon" title="Remove file">&times;</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div id="progress-container" class="progress-container hidden">
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <span id="progress-text">0%</span>
+      </div>
+
+      <!-- Upload Button -->
+      <button id="upload-btn" class="btn btn-primary btn-large" disabled>
+        Upload File
+      </button>
+
+      <!-- Result Section -->
+      <div id="result" class="result hidden">
+        <h3>Your link is ready!</h3>
+        <div class="link-box">
+          <input type="text" id="result-link" readonly>
+          <button id="copy-btn" class="btn btn-secondary">Copy</button>
+        </div>
+        <p id="copy-feedback" class="feedback hidden">Copied to clipboard!</p>
+        <button id="upload-another" class="btn btn-outline">Upload Another File</button>
+      </div>
+
+      <!-- Error Display -->
+      <div id="error" class="error-box hidden">
+        <p id="error-message"></p>
+        <button id="error-dismiss" class="btn btn-outline">Try Again</button>
+      </div>
+
+      <!-- Allowed File Types -->
+      <div class="file-types">
+        <p>Allowed: PDF, Word, Excel, PowerPoint, Images, ZIP, and more</p>
+        <p>Max file size: 4.5 MB</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>Files are stored permanently. Links never expire.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
