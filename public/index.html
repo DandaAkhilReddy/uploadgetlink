@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UploadGetLink - File Sharing</title>
+  <title>UploadGetLink - I Build Your Ideas FOR FREE</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📤</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
 </head>
 <body>
   <div class="container">
+    <!-- Header -->
     <header>
-      <h1>UploadGetLink</h1>
-      <p class="subtitle">Upload files and get shareable links</p>
+      <h1>🚀 UploadGetLink</h1>
+      <p class="tagline">I Build Your Automation Ideas <span class="free-badge">100% FREE</span></p>
+      <p class="subtitle">Tell me your problem, I'll build the solution within a week!</p>
     </header>
 
     <!-- Password Protection Screen -->
     <div id="auth-screen" class="screen">
       <div class="auth-box">
-        <h2>Enter Password</h2>
+        <h2>🔐 Enter Password to Continue</h2>
         <form id="auth-form">
           <input
             type="password"
@@ -26,77 +28,312 @@
             autocomplete="current-password"
             required
           >
-          <button type="submit" class="btn btn-primary">Unlock</button>
+          <button type="submit" class="btn btn-primary">Unlock Access</button>
         </form>
         <p id="auth-error" class="error-message"></p>
       </div>
     </div>
 
-    <!-- Upload Screen -->
-    <div id="upload-screen" class="screen hidden">
-      <!-- Drop Zone -->
-      <div id="drop-zone" class="drop-zone">
-        <div class="drop-zone-content">
-          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="17 8 12 3 7 8"></polyline>
-            <line x1="12" y1="3" x2="12" y2="15"></line>
-          </svg>
-          <p class="drop-text">Drag & drop files here</p>
-          <p class="drop-subtext">or</p>
-          <label class="btn btn-secondary">
-            Browse Files
-            <input type="file" id="file-input" hidden>
-          </label>
+    <!-- Main App Screen -->
+    <div id="main-screen" class="screen hidden">
+      <!-- Tab Navigation -->
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="ideas">💡 Submit Idea</button>
+        <button class="tab-btn" data-tab="upload">📤 Upload Files</button>
+        <button class="tab-btn" data-tab="ai-jobs">💰 AI Jobs</button>
+        <button class="tab-btn admin-only hidden" data-tab="dashboard">📊 Dashboard</button>
+      </nav>
+
+      <!-- Tab: Submit Idea -->
+      <div id="tab-ideas" class="tab-content active">
+        <div class="idea-hero">
+          <h2>🎯 Got a Problem? I'll Build the Solution!</h2>
+          <p>Describe your daily frustration or business idea, and I'll create a working automation or software for you - <strong>completely FREE</strong>.</p>
+          <div class="trust-badges">
+            <span class="trust-badge">✅ No hidden costs</span>
+            <span class="trust-badge">⚡ Delivered in 1 week</span>
+            <span class="trust-badge">🔒 Your idea stays yours</span>
+          </div>
+        </div>
+
+        <form id="idea-form" class="idea-form">
+          <div class="form-group">
+            <label for="idea-email">📧 Your Email <span class="required">*</span></label>
+            <input type="email" id="idea-email" placeholder="your@email.com" required>
+            <small>I'll contact you here with your solution</small>
+          </div>
+
+          <div class="form-group">
+            <label for="idea-name">👤 Your Name <span class="optional">(optional)</span></label>
+            <input type="text" id="idea-name" placeholder="What should I call you?">
+          </div>
+
+          <div class="form-group">
+            <label for="idea-problem">🔥 What daily problem do you want automated? <span class="required">*</span></label>
+            <textarea id="idea-problem" rows="4" placeholder="Example: I spend 2 hours every day copying data from emails to spreadsheets..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="idea-solution">💡 What solution do you think would work? <span class="required">*</span></label>
+            <textarea id="idea-solution" rows="4" placeholder="Example: A tool that automatically reads emails and fills the spreadsheet..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="idea-billion">🚀 What do you see everyday that could be a billion-dollar company? <span class="required">*</span></label>
+            <textarea id="idea-billion" rows="4" placeholder="Example: A platform that connects local farmers directly to restaurants..." required></textarea>
+          </div>
+
+          <button type="submit" id="submit-idea-btn" class="btn btn-primary btn-large">
+            🚀 Submit My Idea
+          </button>
+        </form>
+
+        <!-- Idea Success Message -->
+        <div id="idea-success" class="success-box hidden">
+          <h3>🎉 Idea Submitted Successfully!</h3>
+          <p>Thank you for sharing your idea. I'll review it and get back to you within a week with a working solution!</p>
+          <button id="submit-another-idea" class="btn btn-outline">Submit Another Idea</button>
         </div>
       </div>
 
-      <!-- File Info -->
-      <div id="file-info" class="file-info hidden">
-        <span id="file-name"></span>
-        <span id="file-size"></span>
-        <button id="remove-file" class="btn-icon" title="Remove file">&times;</button>
-      </div>
+      <!-- Tab: Upload Files -->
+      <div id="tab-upload" class="tab-content hidden">
+        <div id="upload-counter" class="upload-counter hidden"></div>
 
-      <!-- Progress Bar -->
-      <div id="progress-container" class="progress-container hidden">
-        <div class="progress-bar">
-          <div id="progress-fill" class="progress-fill"></div>
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-zone-content">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p class="drop-text">Drag & drop files here</p>
+            <p class="drop-subtext">or</p>
+            <label class="btn btn-secondary">
+              Browse Files
+              <input type="file" id="file-input" hidden>
+            </label>
+          </div>
         </div>
-        <span id="progress-text">0%</span>
-      </div>
 
-      <!-- Upload Button -->
-      <button id="upload-btn" class="btn btn-primary btn-large" disabled>
-        Upload File
-      </button>
-
-      <!-- Result Section -->
-      <div id="result" class="result hidden">
-        <h3>Your link is ready!</h3>
-        <div class="link-box">
-          <input type="text" id="result-link" readonly>
-          <button id="copy-btn" class="btn btn-secondary">Copy</button>
+        <!-- File Info -->
+        <div id="file-info" class="file-info hidden">
+          <span id="file-name"></span>
+          <span id="file-size"></span>
+          <button id="remove-file" class="btn-icon" title="Remove file">&times;</button>
         </div>
-        <p id="copy-feedback" class="feedback hidden">Copied to clipboard!</p>
-        <button id="upload-another" class="btn btn-outline">Upload Another File</button>
+
+        <!-- Progress Bar -->
+        <div id="progress-container" class="progress-container hidden">
+          <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+          <span id="progress-text">0%</span>
+        </div>
+
+        <!-- Upload Button -->
+        <button id="upload-btn" class="btn btn-primary btn-large" disabled>
+          Upload File
+        </button>
+
+        <!-- Result Section -->
+        <div id="result" class="result hidden">
+          <h3>✅ Your link is ready!</h3>
+          <div class="link-box">
+            <input type="text" id="result-link" readonly>
+            <button id="copy-btn" class="btn btn-secondary">Copy</button>
+          </div>
+          <p id="copy-feedback" class="feedback hidden">Copied to clipboard!</p>
+          <button id="upload-another" class="btn btn-outline">Upload Another File</button>
+        </div>
+
+        <!-- Error Display -->
+        <div id="upload-error" class="error-box hidden">
+          <p id="upload-error-message"></p>
+          <button id="error-dismiss" class="btn btn-outline">Try Again</button>
+        </div>
+
+        <div class="file-types">
+          <p>Allowed: PDF, Word, Excel, PowerPoint, Images, ZIP, and more</p>
+          <p>Max file size: 4.5 MB</p>
+        </div>
       </div>
 
-      <!-- Error Display -->
-      <div id="error" class="error-box hidden">
-        <p id="error-message"></p>
-        <button id="error-dismiss" class="btn btn-outline">Try Again</button>
+      <!-- Tab: AI Jobs -->
+      <div id="tab-ai-jobs" class="tab-content hidden">
+        <div class="ai-jobs-content">
+          <div class="ai-hero">
+            <h2>💰 Earn $10-$200/Hour Training AI</h2>
+            <p>The AI gold rush isn't only for builders. It's also for trainers!</p>
+          </div>
+
+          <div class="info-card">
+            <h3>🎯 What is AI Training?</h3>
+            <p>Companies are actively hiring people to:</p>
+            <ul>
+              <li>Label and review data</li>
+              <li>Improve AI responses</li>
+              <li>Test reasoning and edge cases</li>
+              <li>Train domain-specific AI (tech, finance, language, logic)</li>
+            </ul>
+          </div>
+
+          <div class="info-card highlight">
+            <h3>📊 Top Platforms Hiring Now</h3>
+            <table class="platform-table">
+              <thead>
+                <tr>
+                  <th>Platform</th>
+                  <th>Pay Range</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="https://www.dataannotation.tech" target="_blank">DataAnnotation.tech</a></td>
+                  <td>$20-50/hr</td>
+                  <td>General + Coding</td>
+                </tr>
+                <tr>
+                  <td><a href="https://outlier.ai" target="_blank">Outlier AI</a></td>
+                  <td>$15-50/hr</td>
+                  <td>STEM Expertise</td>
+                </tr>
+                <tr>
+                  <td><a href="https://appen.com" target="_blank">Appen</a></td>
+                  <td>$10-20/hr</td>
+                  <td>Stable Basic Work</td>
+                </tr>
+                <tr>
+                  <td><a href="https://www.remotasks.com" target="_blank">Remotasks</a></td>
+                  <td>$2-18/hr</td>
+                  <td>LiDAR Only</td>
+                </tr>
+                <tr>
+                  <td><a href="https://www.telusdigital.com" target="_blank">TELUS Digital</a></td>
+                  <td>$8-20/hr</td>
+                  <td>Long-term Contracts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="info-card">
+            <h3>🔥 Skills That Pay Most</h3>
+            <div class="skill-grid">
+              <div class="skill-item">
+                <span class="skill-icon">💻</span>
+                <span class="skill-name">Coding (Python, JS)</span>
+                <span class="skill-pay">$30-55/hr</span>
+              </div>
+              <div class="skill-item">
+                <span class="skill-icon">⚕️</span>
+                <span class="skill-name">Medical Professionals</span>
+                <span class="skill-pay">$50-170/hr</span>
+              </div>
+              <div class="skill-item">
+                <span class="skill-icon">⚖️</span>
+                <span class="skill-name">Attorneys</span>
+                <span class="skill-pay">$50-130/hr</span>
+              </div>
+              <div class="skill-item">
+                <span class="skill-icon">📈</span>
+                <span class="skill-name">Finance (CPA, Banking)</span>
+                <span class="skill-pay">$50-120/hr</span>
+              </div>
+              <div class="skill-item">
+                <span class="skill-icon">🔬</span>
+                <span class="skill-name">PhD Scientists</span>
+                <span class="skill-pay">$40-60/hr</span>
+              </div>
+              <div class="skill-item">
+                <span class="skill-icon">🌍</span>
+                <span class="skill-name">Languages (Spanish, etc)</span>
+                <span class="skill-pay">$20+/hr</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h3>📈 Realistic Earnings</h3>
+            <table class="earnings-table">
+              <thead>
+                <tr>
+                  <th>Effort Level</th>
+                  <th>Time</th>
+                  <th>Monthly Earnings</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Casual</td>
+                  <td>15 min/day</td>
+                  <td>$30-60</td>
+                </tr>
+                <tr>
+                  <td>Part-Time</td>
+                  <td>1-2 hours/day</td>
+                  <td>$200-500</td>
+                </tr>
+                <tr>
+                  <td>Serious Side Hustle</td>
+                  <td>20-30 hours/week</td>
+                  <td>$1,000-2,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="info-card">
+            <h3>🚀 How to Get Started</h3>
+            <ol class="steps-list">
+              <li>Update your LinkedIn & prepare your resume</li>
+              <li>Start with <a href="https://www.dataannotation.tech" target="_blank">DataAnnotation.tech</a> (best for beginners)</li>
+              <li>Apply to 3-5 platforms to hedge against dry spells</li>
+              <li>Focus on quality over speed - high accuracy unlocks better projects</li>
+              <li>Complete additional qualification tests to unlock higher-paying work</li>
+            </ol>
+          </div>
+
+          <div class="info-card note">
+            <h3>⚠️ Important Note</h3>
+            <p>Work availability fluctuates unpredictably. This is best treated as <strong>supplemental income</strong> rather than primary employment. Apply to multiple platforms and be patient during dry spells.</p>
+          </div>
+
+          <div class="cta-section">
+            <p>🔗 Reddit Communities for Discussion:</p>
+            <div class="reddit-links">
+              <a href="https://reddit.com/r/beermoney" target="_blank">r/beermoney</a>
+              <a href="https://reddit.com/r/WorkOnline" target="_blank">r/WorkOnline</a>
+              <a href="https://reddit.com/r/sidehustle" target="_blank">r/sidehustle</a>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Allowed File Types -->
-      <div class="file-types">
-        <p>Allowed: PDF, Word, Excel, PowerPoint, Images, ZIP, and more</p>
-        <p>Max file size: 4.5 MB</p>
+      <!-- Tab: Admin Dashboard (Admin Only) -->
+      <div id="tab-dashboard" class="tab-content hidden">
+        <div class="dashboard-header">
+          <h2>📊 Submitted Ideas Dashboard</h2>
+          <button id="refresh-ideas" class="btn btn-secondary">🔄 Refresh</button>
+        </div>
+
+        <div id="ideas-loading" class="loading hidden">
+          <div class="spinner"></div>
+          <p>Loading ideas...</p>
+        </div>
+
+        <div id="ideas-empty" class="empty-state hidden">
+          <p>📭 No ideas submitted yet.</p>
+        </div>
+
+        <div id="ideas-list" class="ideas-list"></div>
       </div>
     </div>
 
     <footer>
-      <p>Files are stored permanently. Links never expire.</p>
+      <p>Built with ❤️ by Akhil Reddy | <a href="https://github.com/DandaAkhilReddy/uploadgetlink" target="_blank">GitHub</a></p>
     </footer>
   </div>
 
