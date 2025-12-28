@@ -11,31 +11,80 @@
   <div class="container">
     <!-- Header -->
     <header>
-      <h1>🚀 UploadGetLink</h1>
-      <p class="tagline">I Build Your Automation Ideas <span class="free-badge">100% FREE</span></p>
+      <div class="header-content">
+        <div class="logo-section">
+          <h1>🚀 UploadGetLink</h1>
+          <p class="tagline">I Build Your Automation Ideas <span class="free-badge">100% FREE</span></p>
+        </div>
+        <button id="logout-btn" class="btn btn-logout hidden">
+          <span>Logout</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
       <p class="subtitle">Tell me your problem, I'll build the solution within a week!</p>
     </header>
 
     <!-- Password Protection Screen -->
     <div id="auth-screen" class="screen">
       <div class="auth-box">
-        <h2>🔐 Enter Password to Continue</h2>
+        <div class="auth-header">
+          <div class="auth-icon">🔐</div>
+          <h2>Welcome! Enter to Continue</h2>
+          <p class="auth-subtitle">Access the platform to submit ideas & upload files</p>
+        </div>
+
         <form id="auth-form">
-          <input
-            type="password"
-            id="password-input"
-            placeholder="Enter access password"
-            autocomplete="current-password"
-            required
-          >
-          <button type="submit" class="btn btn-primary">Unlock Access</button>
+          <div class="form-group">
+            <label for="email-input">📧 Your Email</label>
+            <input
+              type="email"
+              id="email-input"
+              placeholder="your@email.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password-input">🔑 Password</label>
+            <input
+              type="password"
+              id="password-input"
+              placeholder="Enter password"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+
+          <div class="password-hint">
+            <div class="hint-icon">💡</div>
+            <div class="hint-content">
+              <span class="hint-label">Public Password:</span>
+              <code class="hint-password">FreeIdeas!</code>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-large">
+            🚀 Enter Platform
+          </button>
         </form>
+
         <p id="auth-error" class="error-message"></p>
       </div>
     </div>
 
     <!-- Main App Screen -->
     <div id="main-screen" class="screen hidden">
+      <!-- User Welcome Bar -->
+      <div id="user-welcome" class="user-welcome">
+        <span id="welcome-text">Welcome!</span>
+        <span id="user-email-display" class="user-email"></span>
+      </div>
+
       <!-- Tab Navigation -->
       <nav class="tab-nav">
         <button class="tab-btn active" data-tab="ideas">💡 Submit Idea</button>
@@ -90,9 +139,17 @@
 
         <!-- Idea Success Message -->
         <div id="idea-success" class="success-box hidden">
-          <h3>🎉 Idea Submitted Successfully!</h3>
+          <div class="success-icon">🎉</div>
+          <h3>Idea Submitted Successfully!</h3>
           <p>Thank you for sharing your idea. I'll review it and get back to you within a week with a working solution!</p>
-          <button id="submit-another-idea" class="btn btn-outline">Submit Another Idea</button>
+          <div class="bonus-alert">
+            <span class="bonus-icon">🎁</span>
+            <span>You've earned <strong>5 bonus uploads</strong> for submitting an idea!</span>
+          </div>
+          <div class="success-actions">
+            <button id="view-ai-jobs" class="btn btn-primary">💰 Check AI Jobs to Earn Money</button>
+            <button id="submit-another-idea" class="btn btn-outline">Submit Another Idea</button>
+          </div>
         </div>
       </div>
 
@@ -325,7 +382,8 @@
         </div>
 
         <div id="ideas-empty" class="empty-state hidden">
-          <p>📭 No ideas submitted yet.</p>
+          <div class="empty-icon">📭</div>
+          <p>No ideas submitted yet.</p>
         </div>
 
         <div id="ideas-list" class="ideas-list"></div>

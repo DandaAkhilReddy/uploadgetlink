@@ -14,7 +14,19 @@
       "Bash(az storage container:*)",
       "Bash(az storage account show-connection-string:*)",
       "Bash(az storage account keys list:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Initial UploadGetLink file sharing app\n\n- Vanilla HTML/CSS/JS frontend with drag-and-drop upload\n- Netlify Functions backend for file handling\n- Azure Blob Storage integration for permanent file storage\n- Two access levels: Admin \\(unlimited\\) and Public \\(10 file limit\\)\n- Password-protected upload interface\n- Copy-to-clipboard shareable links\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(npm install:*)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_H4wEu4L41wK98k7yT7tVVoui7WwzEUGp66b5 npx netlify:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(npx netlify-cli deploy:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: Add comprehensive README with badges and docs\n\n- Project overview with badges\n- Features list with emojis\n- Architecture diagram\n- Setup and deployment instructions\n- Environment variables documentation\n- Access levels explanation\n- Contributing guidelines\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_H4wEu4L41wK98k7yT7tVVoui7WwzEUGp66b5 npx netlify-cli deploy:*)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_H4wEu4L41wK98k7yT7tVVoui7WwzEUGp66b5 npx netlify-cli:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

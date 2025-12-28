@@ -21,7 +21,10 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { password } = JSON.parse(event.body);
+    const { email, password } = JSON.parse(event.body);
+
+    // Get credentials from environment
+    const adminEmail = process.env.ADMIN_EMAIL || 'akhilreddydanda3@gmail.com';
     const adminPassword = process.env.ADMIN_PASSWORD;
     const publicPassword = process.env.PUBLIC_PASSWORD;
 
@@ -33,20 +36,30 @@ exports.handler = async (event) => {
       };
     }
 
-    // Check admin password first
-    if (password === adminPassword) {
+    // Validate email is provided
+    if (!email || !email.trim()) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Email is required' })
+      };
+    }
+
+    // Check admin - must match both email AND password
+    if (email.toLowerCase().trim() === adminEmail.toLowerCase() && password === adminPassword) {
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
           success: true,
           accessLevel: 'admin',
+          email: email.trim(),
           message: 'Admin access granted'
         })
       };
     }
 
-    // Check public password
+    // Check public password - any email + correct public password
     if (password === publicPassword) {
       return {
         statusCode: 200,
@@ -54,18 +67,19 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           success: true,
           accessLevel: 'public',
+          email: email.trim(),
           message: 'Public access granted'
         })
       };
     }
 
-    // Invalid password
+    // Invalid credentials
     return {
       statusCode: 401,
       headers,
       body: JSON.stringify({
         success: false,
-        error: 'Invalid password'
+        error: 'Invalid email or password'
       })
     };
   } catch (error) {

@@ -6,8 +6,11 @@
 const authScreen = document.getElementById('auth-screen');
 const mainScreen = document.getElementById('main-screen');
 const authForm = document.getElementById('auth-form');
+const emailInput = document.getElementById('email-input');
 const passwordInput = document.getElementById('password-input');
 const authError = document.getElementById('auth-error');
+const logoutBtn = document.getElementById('logout-btn');
+const userEmailDisplay = document.getElementById('user-email-display');
 
 // Tab Elements
 const tabButtons = document.querySelectorAll('.tab-btn');
@@ -23,6 +26,7 @@ const ideaBillion = document.getElementById('idea-billion');
 const submitIdeaBtn = document.getElementById('submit-idea-btn');
 const ideaSuccess = document.getElementById('idea-success');
 const submitAnotherIdea = document.getElementById('submit-another-idea');
+const viewAiJobsBtn = document.getElementById('view-ai-jobs');
 
 // Upload Elements
 const dropZone = document.getElementById('drop-zone');
@@ -56,6 +60,7 @@ const ideasList = document.getElementById('ideas-list');
 // ============================================
 let selectedFile = null;
 let authPassword = null;
+let authEmail = null;
 let accessLevel = null; // 'admin' or 'public'
 
 // ============================================
@@ -64,8 +69,10 @@ let accessLevel = null; // 'admin' or 'public'
 const PUBLIC_MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ADMIN_MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB (limited by Netlify)
 const PUBLIC_MAX_UPLOADS = 10;
+const IDEA_BONUS_UPLOADS = 5;
 const API_BASE = '/api';
 const UPLOAD_COUNT_KEY = 'uploadgetlink_upload_count';
+const BONUS_UPLOADS_KEY = 'uploadgetlink_bonus_uploads';
 
 // ============================================
 // Utility Functions
@@ -96,13 +103,30 @@ function incrementUploadCount() {
   return count;
 }
 
+function getBonusUploads() {
+  return parseInt(localStorage.getItem(BONUS_UPLOADS_KEY) || '0', 10);
+}
+
+function addBonusUploads(count) {
+  const current = getBonusUploads();
+  localStorage.setItem(BONUS_UPLOADS_KEY, (current + count).toString());
+  return current + count;
+}
+
 function getMaxFileSize() {
   return accessLevel === 'admin' ? ADMIN_MAX_FILE_SIZE : PUBLIC_MAX_FILE_SIZE;
 }
 
 function canUpload() {
   if (accessLevel === 'admin') return true;
-  return getUploadCount() < PUBLIC_MAX_UPLOADS;
+  const used = getUploadCount();
+  const bonus = getBonusUploads();
+  const totalAllowed = PUBLIC_MAX_UPLOADS + bonus;
+  return used < totalAllowed;
+}
+
+function getTotalAllowedUploads() {
+  return PUBLIC_MAX_UPLOADS + getBonusUploads();
 }
 
 function formatDate(dateString) {
@@ -160,10 +184,16 @@ tabButtons.forEach(btn => {
 // ============================================
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
+  if (!email) {
+    authError.textContent = 'Please enter your email';
+    return;
+  }
+
   if (!password) {
-    authError.textContent = 'Please enter a password';
+    authError.textContent = 'Please enter the password';
     return;
   }
 
@@ -171,18 +201,30 @@ authForm.addEventListener('submit', async (e) => {
     const response = await fetch(`${API_BASE}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
+      body: JSON.stringify({ email, password })
     });
 
     const data = await response.json();
 
     if (response.ok && data.success) {
       authPassword = password;
+      authEmail = data.email || email;
       accessLevel = data.accessLevel || 'public';
 
       hideElement(authScreen);
       showElement(mainScreen);
+      showElement(logoutBtn);
       authError.textContent = '';
+
+      // Display user email
+      if (userEmailDisplay) {
+        userEmailDisplay.textContent = authEmail;
+      }
+
+      // Pre-fill idea email with login email
+      if (ideaEmail) {
+        ideaEmail.value = authEmail;
+      }
 
       // Show admin-only elements
       if (accessLevel === 'admin') {
@@ -193,8 +235,9 @@ authForm.addEventListener('submit', async (e) => {
 
       updateUploadCounter();
       sessionStorage.setItem('uploadAuth', accessLevel);
+      sessionStorage.setItem('uploadEmail', authEmail);
     } else {
-      authError.textContent = data.error || 'Invalid password';
+      authError.textContent = data.error || 'Invalid email or password';
       passwordInput.value = '';
       passwordInput.focus();
     }
@@ -203,6 +246,45 @@ authForm.addEventListener('submit', async (e) => {
     console.error('Auth error:', error);
   }
 });
+
+// ============================================
+// Logout
+// ============================================
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    // Clear state
+    authPassword = null;
+    authEmail = null;
+    accessLevel = null;
+
+    // Clear session storage
+    sessionStorage.removeItem('uploadAuth');
+    sessionStorage.removeItem('uploadEmail');
+
+    // Reset UI
+    hideElement(mainScreen);
+    hideElement(logoutBtn);
+    showElement(authScreen);
+
+    // Clear form inputs
+    if (emailInput) emailInput.value = '';
+    if (passwordInput) passwordInput.value = '';
+    if (authError) authError.textContent = '';
+
+    // Hide admin elements
+    document.querySelectorAll('.admin-only').forEach(el => {
+      el.classList.add('hidden');
+    });
+
+    // Reset to first tab
+    switchTab('ideas');
+
+    // Reset idea form
+    if (ideaForm) ideaForm.reset();
+    hideElement(ideaSuccess);
+    showElement(ideaForm);
+  });
+}
 
 // ============================================
 // Idea Submission
@@ -242,6 +324,12 @@ ideaForm.addEventListener('submit', async (e) => {
     if (response.ok && data.success) {
       hideElement(ideaForm);
       showElement(ideaSuccess);
+
+      // Grant bonus uploads
+      if (accessLevel !== 'admin') {
+        addBonusUploads(IDEA_BONUS_UPLOADS);
+        updateUploadCounter();
+      }
     } else {
       alert(data.error || 'Failed to submit idea. Please try again.');
     }
@@ -254,11 +342,25 @@ ideaForm.addEventListener('submit', async (e) => {
   }
 });
 
-submitAnotherIdea.addEventListener('click', () => {
-  ideaForm.reset();
-  hideElement(ideaSuccess);
-  showElement(ideaForm);
-});
+// View AI Jobs button (after successful idea submission)
+if (viewAiJobsBtn) {
+  viewAiJobsBtn.addEventListener('click', () => {
+    switchTab('ai-jobs');
+  });
+}
+
+// Submit Another Idea button
+if (submitAnotherIdea) {
+  submitAnotherIdea.addEventListener('click', () => {
+    ideaForm.reset();
+    // Re-fill email
+    if (ideaEmail && authEmail) {
+      ideaEmail.value = authEmail;
+    }
+    hideElement(ideaSuccess);
+    showElement(ideaForm);
+  });
+}
 
 // ============================================
 // Admin Dashboard
@@ -346,15 +448,22 @@ function updateUploadCounter() {
   }
 
   const count = getUploadCount();
-  const remaining = PUBLIC_MAX_UPLOADS - count;
+  const totalAllowed = getTotalAllowedUploads();
+  const remaining = totalAllowed - count;
+  const bonus = getBonusUploads();
 
-  uploadCounter.textContent = `${remaining} uploads remaining (${count}/${PUBLIC_MAX_UPLOADS} used)`;
+  let text = `${remaining} uploads remaining (${count}/${totalAllowed} used)`;
+  if (bonus > 0) {
+    text += ` • ${bonus} bonus from ideas`;
+  }
+
+  uploadCounter.textContent = text;
   uploadCounter.classList.remove('warning', 'limit-reached', 'hidden');
   showElement(uploadCounter);
 
   if (remaining <= 0) {
     uploadCounter.classList.add('limit-reached');
-    uploadCounter.textContent = 'Upload limit reached (10/10)';
+    uploadCounter.textContent = `Upload limit reached (${count}/${totalAllowed}) - Submit an idea for 5 more!`;
   } else if (remaining <= 3) {
     uploadCounter.classList.add('warning');
   }
@@ -404,7 +513,7 @@ if (dropZone) {
     dropZone.classList.remove('drag-over');
 
     if (!canUpload()) {
-      showUploadError('You have reached the upload limit (10 files)');
+      showUploadError('You have reached the upload limit. Submit an idea for 5 more uploads!');
       return;
     }
 
@@ -419,7 +528,7 @@ if (dropZone) {
 if (fileInput) {
   fileInput.addEventListener('change', (e) => {
     if (!canUpload()) {
-      showUploadError('You have reached the upload limit (10 files)');
+      showUploadError('You have reached the upload limit. Submit an idea for 5 more uploads!');
       e.target.value = '';
       return;
     }
@@ -458,7 +567,7 @@ if (uploadBtn) {
     if (!selectedFile || !authPassword) return;
 
     if (!canUpload()) {
-      showUploadError('You have reached the upload limit (10 files)');
+      showUploadError('You have reached the upload limit. Submit an idea for 5 more uploads!');
       return;
     }
 
